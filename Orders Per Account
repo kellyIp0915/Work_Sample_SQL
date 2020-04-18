@@ -1,0 +1,6 @@
+SELECT *, Gross_Order_Cost__App_+ Hemster_Rate_2 AS Gross_Order_Cost, 
+EXTRACT (Month FROM Order_Date) AS Month, EXTRACT (Year FROM Order_Date) AS Year,
+CONCAT((EXTRACT (Year FROM Order_Date)), "-",((EXTRACT (Month FROM Order_Date)))) AS Year_Month
+FROM orders.ord
+WHERE retailer_bucket <> 'In Home' AND order_status = 'Ready'
+ORDER BY Order_Date, year, month ASC; 
