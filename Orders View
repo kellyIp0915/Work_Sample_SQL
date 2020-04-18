@@ -1,0 +1,19 @@
+SELECT Order_ID, Customer_Name, Customer_Email, Order_Date, 
+  EXTRACT(ISOWEEK FROM Order_Date) AS Week, EXTRACT(dayofweek FROM Order_Date) AS DOW,
+  EXTRACT(QUARTER FROM Order_Date) AS Quarter,
+  /*EXTRACT(DAYOFWEEK..) counts sunday as 1 and saturday as 7. decrement by 1 day to get monday as 1)*/
+  /*list mondays date for each week*/
+  DATE_ADD(Order_Date, INTERVAL -(EXTRACT(DAYOFWEEK FROM DATE_ADD(Order_Date, INTERVAL -1 DAY))-1) DAY) AS Week_Of,
+  User_Name,Location, Location_Label,Order_Status,	Discount_Code, Percent_Off, ord.Retailer_Bucket,
+  Discount_Type, Rush_Cost,	Gross_Order_Cost__App_, City, Order_Cost,
+  
+  --CAST(Hemster_Rate_2 AS NUMERIC) AS Hemster_Price, 
+  Hemster_Rate_2 + Order_Cost AS Total_Order_Cost
+  
+FROM orders.ord
+
+/* CHECK FOR READY ORDERS NATIONALLY WITHIN TWO WEEKS FROM THE CURRENT DATE */
+WHERE Order_Status = 'Ready'
+  AND EXTRACT(ISOWEEK FROM Order_Date) <= EXTRACT(ISOWEEK FROM CURRENT_DATE)
+  AND EXTRACT(QUARTER FROM Order_Date) = EXTRACT(QUARTER FROM CURRENT_DATE)
+  AND EXTRACT(YEAR FROM Order_Date) = EXTRACT(YEAR FROM CURRENT_DATE);
