@@ -1,0 +1,6 @@
+SELECT EXTRACT(Month from Order_Date) AS Month, EXTRACT (YEAR FROM Order_Date) AS YEAR, 
+WHAT, HOW, ORD.City, Location, Location_Label,Order_Date, Order_Cost, ALTERATION_ID,
+CONCAT((EXTRACT (Year FROM Order_Date)), "-",((EXTRACT (Month FROM Order_Date)))) AS Year_Month, garment_type_label, 
+FROM orders.alt
+JOIN orders.ord
+ON ORD.ORDER_ID = ALT.Order_ID
