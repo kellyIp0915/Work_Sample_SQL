@@ -1,0 +1,19 @@
+SELECT Location_Name,  ROUND(AVG(Hemster_Rate_2 + Order_Cost),2) AS Average_Order_Cost, 
+  SUM(Order_Cost) AS Total_Revenue, 
+  EXTRACT(ISOWeek from Order_Date) AS Week,
+  EXTRACT(Month from Order_Date) AS Month,
+  EXTRACT(Quarter from Order_Date) AS Quarter,
+  City,
+/*EXTRACT(DAYOFWEEK..) counts sunday as 1 and saturday as 7. decrement by 1 day to get monday as 1)*/
+  /*list mondays date for each week*/
+DATE_ADD(Order_Date, INTERVAL -(EXTRACT(DAYOFWEEK FROM DATE_ADD(Order_Date, INTERVAL -1 DAY))-1) DAY) AS Week_Of
+
+FROM orders.ord
+
+WHERE EXTRACT(ISOWEEK FROM Order_Date) <= EXTRACT(ISOWEEK FROM CURRENT_DATE)
+  AND EXTRACT(QUARTER FROM Order_Date) = EXTRACT(QUARTER FROM CURRENT_DATE)
+  AND EXTRACT(YEAR FROM Order_Date) = EXTRACT(YEAR FROM CURRENT_DATE)
+  AND Order_Status NOT LIKE ('%Incomplete%') 
+  --AND City LIKE('San%') AND Order_Status = 'Ready'
+GROUP BY Location_Name, Quarter, Month, Week, Week_Of, city
+HAVING Location_Name NOT LIKE('%In_Home%') AND Location_Name NOT LIKE('%Hemster%') ;
